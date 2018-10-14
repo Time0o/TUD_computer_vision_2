@@ -110,6 +110,10 @@ if __name__ == '__main__':
                         action='store_true',
                         help="automatically crop templates to ROI")
 
+    parser.add_argument('-v', '--visualize',
+                        action='store_true',
+                        help="visualize result")
+
     args = parser.parse_args()
 
     # read input image and templates
@@ -131,6 +135,17 @@ if __name__ == '__main__':
         templates = [autocrop(template) for template in templates]
 
     # perform template matching
+    results = [template_match_ccorr(img, template) for template in templates]
+
+    # print results
+    for i, (_, matches) in enumerate(results):
+        if matches:
+            print('{}: {}'.format(args.templates[i], matches))
+
+    # visualize results
+    if not args.visualize:
+        sys.exit(0)
+
     if len(templates) == 1:
         _, axes = plt.subplots(1, 2)
 
@@ -143,8 +158,6 @@ if __name__ == '__main__':
         axes[1].imshow(ccorr)
 
         if matches:
-            print('{}: {}'.format(args.templates[0], matches))
-
             matches_rows, matches_cols = zip(*matches)
             axes[1].scatter(matches_cols, matches_rows, marker='x', color='r')
             axes[0].scatter(matches_cols, matches_rows, marker='x', color='r')
@@ -156,8 +169,6 @@ if __name__ == '__main__':
             _, matches = template_match_ccorr(img, template)
 
             if matches:
-                print('{}: {}'.format(args.templates[i], matches))
-
                 matches_rows, matches_cols = zip(*matches)
 
                 l = args.templates[i]
