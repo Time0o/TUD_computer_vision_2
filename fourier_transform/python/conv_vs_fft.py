@@ -196,8 +196,10 @@ if __name__ == '__main__':
 
     if args.image is not None:
         if args.random_image:
-            err = "can not simultaneously specify --image and --random-image"
-            raise ValueError(err)
+            print("can not simultaneously specify --image and --random-image",
+                  file=sys.stderr)
+
+            sys.exit(1)
 
         if args.image_width is not None:
             print("Warning: --image specified, ignoring --image-width",
@@ -233,7 +235,9 @@ if __name__ == '__main__':
         img = cv.imread(args.image, flags=cv.IMREAD_GRAYSCALE)
 
         if img is None:
-            print("Failed to read image file '{}'", file=sys.stderr)
+            print("Failed to read image file '{}'".format(args.image),
+                  file=sys.stderr)
+
             sys.exit(1)
     else:
         dtype = IMAGE_DTYPES[args.image_dtype]
