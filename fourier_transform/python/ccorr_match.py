@@ -39,13 +39,7 @@ def autocrop(img: np.ndarray) -> np.ndarray:
     return img[y:(y + h), x:(x + w)]
 
 
-def template_match_ccorr(img: np.ndarray,
-                         template: np.ndarray) -> List[Tuple[int, int]]:
-
-    raise ValueError('TODO')
-
-
-def template_match_ccorr_opencv(
+def template_match_ccorr(
         img: np.ndarray,
         template: np.ndarray) -> Tuple[np.ndarray, List[Tuple[int, int]]]:
 
@@ -112,12 +106,6 @@ if __name__ == '__main__':
                         metavar='TEMPLATE',
                         help="image patches to locate in input image")
 
-    method_help = "concrete cross correlation implementation (default simple)"
-    parser.add_argument('--method',
-                        default='simple',
-                        choices=['simple', 'opencv'],
-                        help=method_help)
-
     parser.add_argument('--auto-crop-templates',
                         action='store_true',
                         help="automatically crop templates to ROI")
@@ -143,15 +131,10 @@ if __name__ == '__main__':
         templates = [autocrop(template) for template in templates]
 
     # perform template matching
-    if args.method == 'simple':
-        template_matcher = template_match_ccorr
-    elif args.method == 'opencv':
-        template_matcher = template_match_ccorr_opencv
-
     if len(templates) == 1:
         _, axes = plt.subplots(1, 2)
 
-        ccorr, matches = template_matcher(img, templates[0])
+        ccorr, matches = template_match_ccorr(img, templates[0])
 
         axes[0].set_title("Template Match Locations")
         axes[0].imshow(img, cmap='gray')
@@ -168,7 +151,7 @@ if __name__ == '__main__':
         plt.imshow(img, cmap='gray')
 
         for i, template in enumerate(templates):
-            _, matches = template_matcher(img, template)
+            _, matches = template_match_ccorr(img, template)
 
             if matches:
                 matches_rows, matches_cols = zip(*matches)
