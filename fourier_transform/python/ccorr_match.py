@@ -143,6 +143,8 @@ if __name__ == '__main__':
         axes[1].imshow(ccorr)
 
         if matches:
+            print('{}: {}'.format(args.templates[0], matches))
+
             matches_rows, matches_cols = zip(*matches)
             axes[1].scatter(matches_cols, matches_rows, marker='x', color='r')
             axes[0].scatter(matches_cols, matches_rows, marker='x', color='r')
@@ -154,6 +156,8 @@ if __name__ == '__main__':
             _, matches = template_match_ccorr(img, template)
 
             if matches:
+                print('{}: {}'.format(args.templates[i], matches))
+
                 matches_rows, matches_cols = zip(*matches)
 
                 l = args.templates[i]
